@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+dir="$( cd "$( dirname "$0" )" && pwd )"
+
+. $dir/helper.sh
+. $dir/../docker-web-srv/helper.sh
+
+case $1 in
+	create)
+		echo "Command: create\n"
+
+		rootpass="$(rand_string 16)"
+
+		username="$(rand_string 6)"
+		userpass="$(rand_string 12)"
+
+		mysql_rootpass="$(rand_string 16)"
+
+		mysql_username=$username
+		mysql_userpass="$(rand_string 12)"
+		mysql_database=$username
+
+		port_prefix=203
+
+		port_http=$port_prefix"80"
+		port_ssh=$port_prefix"22"
+
+		. $dir/config.conf
+
+		create_disk $fs_path $size_mb
+		format_disk $fs_path
+		mount_disk $fs_path $mount_path
+		#auto_mount $fs_path $mount_path
+
+		create_container $container_name
+
+		echo "User name: $username"
+		echo "User pass: $userpass"
+		echo "Root pass: $rootpass"
+
+		echo "Mysql user name: $mysql_username"
+		echo "Mysql user pass: $mysql_userpass"
+		echo "Mysql database: $mysql_database"
+		echo "Mysql root pass: $mysql_rootpass"
+	;;
+	remove)
+		echo "Command: remove\n"
+
+		username="$2"
+
+		. $dir/config.conf
+
+		kill_container $container_name
+		remove_container $container_name
+		umount_disk $mount_path
+		remove_disk $fs_path
+	;;
+	*)
+		echo "Choose one: create|remove\n"
+	;;
+esac
+
+

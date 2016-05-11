@@ -9,7 +9,7 @@
 create_disk () {
 	echo "START: Create disk $1 with size: $2 Mb"
 	dd if=/dev/zero of=$1 bs=1024 count=$(($2*1024))
-	echo "DONE: Create disk"
+	echo "FINISH: Create disk"
 }
 
 ##	Function for formatting disk
@@ -20,7 +20,7 @@ create_disk () {
 format_disk () {
 	echo "START: Format disk $1"
 	yes "yes" | mkfs.ext3 $1
-	echo "DONE: Format disk"
+	echo "FINISH: Format disk"
 }
 
 ##	Function for mounting disk
@@ -33,7 +33,7 @@ mount_disk () {
 	echo "START: Mount disk $1 to $2"
 	mkdir -p $2
 	mount -o loop $1 $2
-	echo "DONE: Mount disk"
+	echo "FINISH: Mount disk"
 }
 
 ##	Function for auto mounting disk after reboot
@@ -57,7 +57,7 @@ umount_disk () {
 	echo "START: Umount disk $1"
 	umount $1
 	rm -r $1
-	echo "DONE: Umount disk $1"
+	echo "FINISH: Umount disk $1"
 }
 
 ##	Function for removing disk
@@ -68,5 +68,9 @@ umount_disk () {
 remove_disk () {
 	echo "START: Remove disk $1"
 	rm $1
-	echo "DONE: Remove disk $1"
+	echo "FINISH: Remove disk $1"
+}
+
+rand_string () {
+	return "$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w $1 | head -n 1)"
 }
